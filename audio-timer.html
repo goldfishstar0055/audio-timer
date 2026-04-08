@@ -4,17 +4,184 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>音声タイマー</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Yomogi&display=swap" rel="stylesheet">
   <style>
+    /* ===== CSS Variables (default: シンプル) ===== */
+    :root {
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --bg: #0f0f0f;
+      --text: #f0f0f0;
+      --text-muted: #666;
+      --clock-color: #fff;
+      --clock-weight: 200;
+      --card-bg: #1a1a1a;
+      --card-border: #2a2a2a;
+      --input-bg: #111;
+      --input-border: #333;
+      --input-focus: #555;
+      --input-color: #fff;
+      --range-bg: #333;
+      --toggle-off: #333;
+      --toggle-on: #4ade80;
+      --thumb-color: #fff;
+      --btn-primary-bg: #fff;
+      --btn-primary-color: #000;
+      --btn-secondary-bg: #1a1a1a;
+      --btn-secondary-border: #333;
+      --btn-secondary-color: #aaa;
+      --countdown-on: #4ade80;
+      --countdown-warning: #facc15;
+      --countdown-alarm: #f87171;
+      --countdown-idle: #444;
+      --entry-bg: #141414;
+      --entry-border: #232323;
+      --entry-time-color: #fff;
+      --label-color: #666;
+      --status-color: #555;
+      --file-btn-bg: #222;
+      --file-btn-border: #444;
+      --file-btn-color: #aaa;
+      --overlay-bg: rgba(0,0,0,0.85);
+      --alarm-box-bg: #1a1a1a;
+      --alarm-box-border: #333;
+      --alarm-time-color: #777;
+      --dismiss-bg: #f87171;
+      --dismiss-hover: #ef4444;
+      --del-color: #444;
+      --del-hover: #f87171;
+      --h1-color: #aaa;
+      --radius-card: 16px;
+      --radius-btn: 12px;
+      --radius-input: 10px;
+      --theme-btn-active-bg: #fff;
+      --theme-btn-active-color: #000;
+      --theme-btn-bg: #1a1a1a;
+      --theme-btn-color: #777;
+      --theme-btn-border: #2a2a2a;
+    }
+
+    /* ===== メルヘンテーマ ===== */
+    [data-theme="merhen"] {
+      --font: 'DotGothic16', sans-serif;
+      --bg: #fff0f8;
+      --text: #8b2252;
+      --text-muted: #c77daa;
+      --clock-color: #6a1040;
+      --clock-weight: 400;
+      --card-bg: #ffe4f0;
+      --card-border: #f8bbd0;
+      --input-bg: #fff8fc;
+      --input-border: #f48fb1;
+      --input-focus: #e91e63;
+      --input-color: #8b2252;
+      --range-bg: #f8bbd0;
+      --toggle-off: #f8bbd0;
+      --toggle-on: #e91e63;
+      --thumb-color: #fff;
+      --btn-primary-bg: #e91e63;
+      --btn-primary-color: #fff;
+      --btn-secondary-bg: #fff0f8;
+      --btn-secondary-border: #f48fb1;
+      --btn-secondary-color: #c2185b;
+      --countdown-on: #e91e63;
+      --countdown-warning: #ff9800;
+      --countdown-alarm: #ad1457;
+      --countdown-idle: #f8bbd0;
+      --entry-bg: #fff8fc;
+      --entry-border: #f8bbd0;
+      --entry-time-color: #8b2252;
+      --label-color: #e91e63;
+      --status-color: #c2185b;
+      --file-btn-bg: #fff8fc;
+      --file-btn-border: #f48fb1;
+      --file-btn-color: #c2185b;
+      --overlay-bg: rgba(139,34,82,0.7);
+      --alarm-box-bg: #fff0f8;
+      --alarm-box-border: #f48fb1;
+      --alarm-time-color: #c2185b;
+      --dismiss-bg: #e91e63;
+      --dismiss-hover: #c2185b;
+      --del-color: #f8bbd0;
+      --del-hover: #e91e63;
+      --h1-color: #e91e63;
+      --radius-card: 20px;
+      --radius-btn: 20px;
+      --radius-input: 12px;
+      --theme-btn-active-bg: #e91e63;
+      --theme-btn-active-color: #fff;
+      --theme-btn-bg: #fff0f8;
+      --theme-btn-color: #c77daa;
+      --theme-btn-border: #f8bbd0;
+    }
+
+    /* ===== ナチュラルテーマ ===== */
+    [data-theme="natural"] {
+      --font: 'Yomogi', cursive;
+      --bg: #f5f0e8;
+      --text: #4a5240;
+      --text-muted: #8a9e7a;
+      --clock-color: #3d4a2f;
+      --clock-weight: 400;
+      --card-bg: #ede8dc;
+      --card-border: #c8bfa8;
+      --input-bg: #faf7f2;
+      --input-border: #c8bfa8;
+      --input-focus: #7baa6b;
+      --input-color: #3d4a2f;
+      --range-bg: #c8bfa8;
+      --toggle-off: #c8bfa8;
+      --toggle-on: #7baa6b;
+      --thumb-color: #fff;
+      --btn-primary-bg: #5a7a48;
+      --btn-primary-color: #fff;
+      --btn-secondary-bg: #f5f0e8;
+      --btn-secondary-border: #c8bfa8;
+      --btn-secondary-color: #6a7a5a;
+      --countdown-on: #7baa6b;
+      --countdown-warning: #d4a843;
+      --countdown-alarm: #c0714f;
+      --countdown-idle: #c8bfa8;
+      --entry-bg: #faf7f2;
+      --entry-border: #d5ccba;
+      --entry-time-color: #3d4a2f;
+      --label-color: #8a9e7a;
+      --status-color: #8a9e7a;
+      --file-btn-bg: #faf7f2;
+      --file-btn-border: #aab89a;
+      --file-btn-color: #6a7a5a;
+      --overlay-bg: rgba(74,82,64,0.75);
+      --alarm-box-bg: #f5f0e8;
+      --alarm-box-border: #c8bfa8;
+      --alarm-time-color: #8a9e7a;
+      --dismiss-bg: #c0714f;
+      --dismiss-hover: #a05a3a;
+      --del-color: #c8bfa8;
+      --del-hover: #c0714f;
+      --h1-color: #8a9e7a;
+      --radius-card: 18px;
+      --radius-btn: 14px;
+      --radius-input: 12px;
+      --theme-btn-active-bg: #5a7a48;
+      --theme-btn-active-color: #fff;
+      --theme-btn-bg: #f5f0e8;
+      --theme-btn-color: #8a9e7a;
+      --theme-btn-border: #c8bfa8;
+    }
+
+    /* ===== Base styles ===== */
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #0f0f0f;
-      color: #f0f0f0;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: background 0.3s, color 0.3s;
     }
 
     .container {
@@ -23,17 +190,44 @@
       padding: 32px 24px;
     }
 
+    /* ===== Theme switcher ===== */
+    .theme-switcher {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+
+    .theme-btn {
+      background: var(--theme-btn-bg);
+      border: 1px solid var(--theme-btn-border);
+      border-radius: 20px;
+      color: var(--theme-btn-color);
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 12px;
+      padding: 6px 14px;
+      transition: all 0.2s;
+    }
+
+    .theme-btn.active {
+      background: var(--theme-btn-active-bg);
+      color: var(--theme-btn-active-color);
+      border-color: var(--theme-btn-active-bg);
+    }
+
+    /* ===== Title ===== */
     h1 {
       font-size: 18px;
       font-weight: 600;
-      color: #aaa;
+      color: var(--h1-color);
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      margin-bottom: 32px;
+      margin-bottom: 8px;
       text-align: center;
     }
 
-    /* Clock display */
+    /* ===== Clock ===== */
     .clock {
       text-align: center;
       margin-bottom: 40px;
@@ -41,48 +235,56 @@
 
     .clock-time {
       font-size: 72px;
-      font-weight: 200;
+      font-weight: var(--clock-weight);
       letter-spacing: -2px;
       font-variant-numeric: tabular-nums;
-      color: #fff;
+      color: var(--clock-color);
+    }
+
+    [data-theme="merhen"] .clock-time {
+      font-size: 48px;
+      letter-spacing: 2px;
+    }
+
+    [data-theme="natural"] .clock-time {
+      font-size: 64px;
+      letter-spacing: -1px;
     }
 
     .clock-date {
       font-size: 14px;
-      color: #666;
+      color: var(--text-muted);
       margin-top: 6px;
     }
 
-    /* Card */
+    /* ===== Card ===== */
     .card {
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      border-radius: 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-card);
       padding: 24px;
       margin-bottom: 16px;
+      transition: background 0.3s, border-color 0.3s;
     }
 
     .card-label {
       font-size: 12px;
-      color: #666;
+      color: var(--label-color);
       letter-spacing: 0.06em;
       text-transform: uppercase;
       margin-bottom: 12px;
     }
 
-    /* Time picker */
-    .time-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    /* ===== Time input ===== */
+    .time-row { display: flex; align-items: center; gap: 12px; }
 
     .time-input {
       flex: 1;
-      background: #111;
-      border: 1px solid #333;
-      border-radius: 10px;
-      color: #fff;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: var(--radius-input);
+      color: var(--input-color);
+      font-family: var(--font);
       font-size: 28px;
       font-weight: 300;
       padding: 12px 16px;
@@ -91,59 +293,50 @@
       transition: border-color 0.2s;
     }
 
-    .time-input:focus {
-      border-color: #555;
-    }
+    .time-input:focus { border-color: var(--input-focus); }
 
-    /* Countdown */
-    .countdown-display {
-      text-align: center;
-      padding: 16px 0;
-    }
+    /* ===== Countdown ===== */
+    .countdown-display { text-align: center; padding: 16px 0; }
 
     .countdown-value {
       font-size: 48px;
       font-weight: 200;
-      color: #4ade80;
+      color: var(--countdown-on);
       font-variant-numeric: tabular-nums;
       letter-spacing: -1px;
       transition: color 0.3s;
     }
 
-    .countdown-value.warning { color: #facc15; }
-    .countdown-value.alarm   { color: #f87171; }
-    .countdown-value.idle    { color: #444; }
+    [data-theme="merhen"] .countdown-value { font-size: 32px; letter-spacing: 2px; }
+    [data-theme="natural"] .countdown-value { font-size: 44px; }
 
-    .countdown-label {
-      font-size: 13px;
-      color: #555;
-      margin-top: 4px;
-    }
+    .countdown-value.warning { color: var(--countdown-warning); }
+    .countdown-value.alarm   { color: var(--countdown-alarm); }
+    .countdown-value.idle    { color: var(--countdown-idle); }
 
-    /* Audio file */
-    .file-area {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .countdown-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+    /* ===== File selector ===== */
+    .file-area { display: flex; align-items: center; gap: 12px; }
 
     .file-btn {
-      background: #222;
-      border: 1px dashed #444;
-      border-radius: 10px;
-      color: #aaa;
+      background: var(--file-btn-bg);
+      border: 1px dashed var(--file-btn-border);
+      border-radius: var(--radius-input);
+      color: var(--file-btn-color);
       cursor: pointer;
+      font-family: var(--font);
       font-size: 13px;
       padding: 10px 16px;
       transition: all 0.2s;
       white-space: nowrap;
     }
 
-    .file-btn:hover { border-color: #666; color: #fff; }
+    .file-btn:hover { border-color: var(--input-focus); color: var(--text); }
 
     .file-name {
       font-size: 13px;
-      color: #777;
+      color: var(--text-muted);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -151,20 +344,16 @@
 
     input[type="file"] { display: none; }
 
-    /* Volume */
-    .volume-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .vol-label { font-size: 13px; color: #666; min-width: 28px; }
+    /* ===== Volume ===== */
+    .volume-row { display: flex; align-items: center; gap: 12px; }
+    .vol-label { font-size: 13px; color: var(--text-muted); min-width: 28px; }
+    .vol-value { font-size: 13px; color: var(--text-muted); min-width: 36px; text-align: right; }
 
     input[type="range"] {
       flex: 1;
       -webkit-appearance: none;
       height: 4px;
-      background: #333;
+      background: var(--range-bg);
       border-radius: 2px;
       outline: none;
     }
@@ -173,98 +362,106 @@
       -webkit-appearance: none;
       width: 16px; height: 16px;
       border-radius: 50%;
-      background: #fff;
+      background: var(--thumb-color);
       cursor: pointer;
     }
 
-    .vol-value { font-size: 13px; color: #666; min-width: 36px; text-align: right; }
+    /* ===== Toggle ===== */
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; }
+    .toggle-label { font-size: 14px; color: var(--text); }
 
-    /* Loop */
-    .toggle-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .toggle-label { font-size: 14px; color: #ccc; }
-
-    .toggle {
-      position: relative;
-      width: 44px; height: 24px;
-      cursor: pointer;
-    }
-
+    .toggle { position: relative; width: 44px; height: 24px; cursor: pointer; }
     .toggle input { display: none; }
 
     .toggle-track {
       position: absolute; inset: 0;
-      background: #333;
+      background: var(--toggle-off);
       border-radius: 12px;
       transition: background 0.2s;
     }
 
-    .toggle input:checked + .toggle-track { background: #4ade80; }
+    .toggle input:checked + .toggle-track { background: var(--toggle-on); }
 
     .toggle-thumb {
       position: absolute;
       top: 3px; left: 3px;
       width: 18px; height: 18px;
-      background: #fff;
+      background: var(--thumb-color);
       border-radius: 50%;
       transition: transform 0.2s;
+      pointer-events: none;
     }
 
     .toggle input:checked ~ .toggle-thumb { transform: translateX(20px); }
 
-    /* Buttons */
-    .btn-row {
-      display: flex;
-      gap: 12px;
-      margin-top: 8px;
-    }
+    /* ===== Buttons ===== */
+    .btn-row { display: flex; gap: 12px; margin-top: 8px; }
 
     .btn {
       flex: 1;
       border: none;
-      border-radius: 12px;
+      border-radius: var(--radius-btn);
       cursor: pointer;
+      font-family: var(--font);
       font-size: 15px;
       font-weight: 500;
       padding: 14px;
       transition: all 0.15s;
     }
 
-    .btn-start {
-      background: #fff;
-      color: #000;
-    }
-
-    .btn-start:hover { background: #e0e0e0; }
+    .btn-start { background: var(--btn-primary-bg); color: var(--btn-primary-color); }
+    .btn-start:hover { opacity: 0.85; }
 
     .btn-stop {
-      background: #1a1a1a;
-      border: 1px solid #333;
-      color: #aaa;
+      background: var(--btn-secondary-bg);
+      border: 1px solid var(--btn-secondary-border);
+      color: var(--btn-secondary-color);
     }
 
-    .btn-stop:hover { border-color: #666; color: #fff; }
-
+    .btn-stop:hover { border-color: var(--input-focus); color: var(--text); }
     .btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-    /* Status */
-    .status {
-      text-align: center;
-      font-size: 13px;
-      color: #555;
-      min-height: 20px;
-      margin-top: 8px;
+    /* ===== Status ===== */
+    .status { text-align: center; font-size: 13px; color: var(--status-color); min-height: 20px; margin-top: 8px; }
+
+    /* ===== Entries ===== */
+    .entries { margin-top: 8px; }
+
+    .entry-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--entry-bg);
+      border: 1px solid var(--entry-border);
+      border-radius: var(--radius-input);
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      font-size: 14px;
     }
 
-    /* Alarm overlay */
+    .entry-time { font-weight: 500; color: var(--entry-time-color); min-width: 60px; }
+    .entry-file { color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; margin: 0 12px; }
+    .entry-status { font-size: 12px; color: var(--countdown-on); min-width: 40px; text-align: right; }
+    .entry-status.done { color: var(--text-muted); }
+
+    .entry-del {
+      background: none;
+      border: none;
+      color: var(--del-color);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0 0 0 10px;
+      transition: color 0.15s;
+    }
+
+    .entry-del:hover { color: var(--del-hover); }
+    .no-entries { font-size: 13px; color: var(--text-muted); text-align: center; padding: 16px 0; }
+
+    /* ===== Overlay ===== */
     .overlay {
       display: none;
       position: fixed; inset: 0;
-      background: rgba(0,0,0,0.85);
+      background: var(--overlay-bg);
       align-items: center;
       justify-content: center;
       z-index: 100;
@@ -273,77 +470,58 @@
     .overlay.active { display: flex; }
 
     .alarm-box {
-      background: #1a1a1a;
-      border: 1px solid #333;
-      border-radius: 20px;
+      background: var(--alarm-box-bg);
+      border: 1px solid var(--alarm-box-border);
+      border-radius: var(--radius-card);
       padding: 40px 48px;
       text-align: center;
       animation: pulse 1s infinite alternate;
     }
 
     @keyframes pulse {
-      from { box-shadow: 0 0 0 0 rgba(248,113,113,0); }
-      to   { box-shadow: 0 0 40px 4px rgba(248,113,113,0.3); }
+      from { box-shadow: 0 0 0 0 rgba(0,0,0,0); }
+      to   { box-shadow: 0 0 40px 4px rgba(0,0,0,0.2); }
     }
 
     .alarm-icon { font-size: 48px; margin-bottom: 16px; }
-    .alarm-title { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
-    .alarm-time  { font-size: 15px; color: #777; margin-bottom: 28px; }
+    .alarm-title { font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .alarm-time  { font-size: 15px; color: var(--alarm-time-color); margin-bottom: 28px; }
 
     .btn-dismiss {
-      background: #f87171;
+      background: var(--dismiss-bg);
       border: none;
-      border-radius: 12px;
+      border-radius: var(--radius-btn);
       color: #fff;
       cursor: pointer;
+      font-family: var(--font);
       font-size: 15px;
       font-weight: 600;
       padding: 12px 32px;
     }
 
-    .btn-dismiss:hover { background: #ef4444; }
+    .btn-dismiss:hover { background: var(--dismiss-hover); }
 
-    /* Entries list */
-    .entries {
-      margin-top: 8px;
-    }
+    /* ===== メルヘン 装飾 ===== */
+    [data-theme="merhen"] h1::before { content: '♡ '; }
+    [data-theme="merhen"] h1::after  { content: ' ♡'; }
+    [data-theme="merhen"] .alarm-icon::after { content: ' ✨'; }
 
-    .entry-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #141414;
-      border: 1px solid #232323;
-      border-radius: 10px;
-      padding: 10px 14px;
-      margin-bottom: 8px;
-      font-size: 14px;
-    }
-
-    .entry-time { font-weight: 500; color: #fff; min-width: 60px; }
-    .entry-file { color: #666; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; margin: 0 12px; }
-    .entry-status { font-size: 12px; color: #4ade80; min-width: 40px; text-align: right; }
-    .entry-status.done { color: #555; }
-
-    .entry-del {
-      background: none;
-      border: none;
-      color: #444;
-      cursor: pointer;
-      font-size: 16px;
-      padding: 0 0 0 10px;
-      transition: color 0.15s;
-    }
-
-    .entry-del:hover { color: #f87171; }
-
-    .no-entries { font-size: 13px; color: #444; text-align: center; padding: 16px 0; }
+    /* ===== ナチュラル 装飾 ===== */
+    [data-theme="natural"] h1::before { content: '🌿 '; }
+    [data-theme="natural"] h1::after  { content: ' 🌿'; }
   </style>
 </head>
-<body>
+<body data-theme="simple">
 
 <div class="container">
   <h1>Audio Timer</h1>
+
+  <!-- Theme switcher -->
+  <div class="theme-switcher">
+    <button class="theme-btn active" data-theme="simple">シンプル</button>
+    <button class="theme-btn" data-theme="merhen">メルヘン</button>
+    <button class="theme-btn" data-theme="natural">ナチュラル</button>
+  </div>
 
   <!-- Current time -->
   <div class="clock">
@@ -404,7 +582,7 @@
   <div class="status" id="status"></div>
 
   <!-- Entry list -->
-  <div class="card" style="margin-top:16px;" id="entriesCard">
+  <div class="card" style="margin-top:16px;">
     <div class="card-label">スケジュール</div>
     <div class="entries" id="entriesList">
       <div class="no-entries">タイマーがありません</div>
@@ -417,7 +595,7 @@
   <div class="alarm-box">
     <div class="alarm-icon">🔔</div>
     <div class="alarm-title" id="alarmTitle">時刻になりました</div>
-    <div class="alarm-time"  id="alarmDetail"></div>
+    <div class="alarm-time" id="alarmDetail"></div>
     <button class="btn-dismiss" id="btnDismiss">停止</button>
   </div>
 </div>
@@ -425,35 +603,52 @@
 <audio id="audioPlayer"></audio>
 
 <script>
+  // ---- Theme ----
+  const THEME_KEY = 'audio-timer-theme';
+
+  function applyTheme(theme) {
+    document.body.setAttribute('data-theme', theme);
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.theme === theme);
+    });
+    localStorage.setItem(THEME_KEY, theme);
+  }
+
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyTheme(btn.dataset.theme));
+  });
+
+  // Restore saved theme
+  applyTheme(localStorage.getItem(THEME_KEY) || 'simple');
+
   // ---- State ----
-  let timers = [];      // { id, targetHH, targetMM, targetSS, fileName, audioSrc, volume, loop }
+  let timers = [];
   let activeAudio = null;
-  let tickInterval = null;
   let audioFile = null;
   let audioSrc = null;
 
   const WEEKDAYS = ['日','月','火','水','木','金','土'];
 
   // ---- DOM refs ----
-  const clockTime     = document.getElementById('clockTime');
-  const clockDate     = document.getElementById('clockDate');
-  const targetTime    = document.getElementById('targetTime');
-  const audioFileEl   = document.getElementById('audioFile');
-  const fileNameEl    = document.getElementById('fileName');
-  const volumeEl      = document.getElementById('volume');
-  const volDisplay    = document.getElementById('volDisplay');
-  const loopToggle    = document.getElementById('loopToggle');
-  const countdownValue= document.getElementById('countdownValue');
-  const countdownLabel= document.getElementById('countdownLabel');
-  const btnAdd        = document.getElementById('btnAdd');
-  const btnStopAll    = document.getElementById('btnStopAll');
-  const statusEl      = document.getElementById('status');
-  const entriesList   = document.getElementById('entriesList');
-  const overlay       = document.getElementById('overlay');
-  const alarmTitle    = document.getElementById('alarmTitle');
-  const alarmDetail   = document.getElementById('alarmDetail');
-  const btnDismiss    = document.getElementById('btnDismiss');
-  const audioPlayer   = document.getElementById('audioPlayer');
+  const clockTime      = document.getElementById('clockTime');
+  const clockDate      = document.getElementById('clockDate');
+  const targetTime     = document.getElementById('targetTime');
+  const audioFileEl    = document.getElementById('audioFile');
+  const fileNameEl     = document.getElementById('fileName');
+  const volumeEl       = document.getElementById('volume');
+  const volDisplay     = document.getElementById('volDisplay');
+  const loopToggle     = document.getElementById('loopToggle');
+  const countdownValue = document.getElementById('countdownValue');
+  const countdownLabel = document.getElementById('countdownLabel');
+  const btnAdd         = document.getElementById('btnAdd');
+  const btnStopAll     = document.getElementById('btnStopAll');
+  const statusEl       = document.getElementById('status');
+  const entriesList    = document.getElementById('entriesList');
+  const overlay        = document.getElementById('overlay');
+  const alarmTitle     = document.getElementById('alarmTitle');
+  const alarmDetail    = document.getElementById('alarmDetail');
+  const btnDismiss     = document.getElementById('btnDismiss');
+  const audioPlayer    = document.getElementById('audioPlayer');
 
   // ---- Clock ----
   function updateClock() {
@@ -466,31 +661,25 @@
     clockDate.textContent = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日（${wd}）`;
   }
 
-  // ---- Countdown for first pending timer ----
+  // ---- Countdown ----
   function updateCountdown() {
-    const now = new Date();
     const pending = timers.filter(t => !t.fired);
-
     if (pending.length === 0) {
       countdownValue.textContent = '--:--:--';
       countdownValue.className = 'countdown-value idle';
       countdownLabel.textContent = timers.length > 0 ? 'すべて完了' : 'タイマーを追加してください';
       return;
     }
-
-    // nearest timer
     const t = pending.reduce((a, b) => secsUntil(a) <= secsUntil(b) ? a : b);
     const secs = secsUntil(t);
-
     const h = Math.floor(secs / 3600);
     const m = Math.floor((secs % 3600) / 60);
     const s = secs % 60;
     countdownValue.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
     countdownLabel.textContent = `${t.targetHH}:${t.targetMM}:${t.targetSS} に再生`;
-
-    if (secs <= 10) countdownValue.className = 'countdown-value alarm';
+    if (secs <= 10)      countdownValue.className = 'countdown-value alarm';
     else if (secs <= 60) countdownValue.className = 'countdown-value warning';
-    else countdownValue.className = 'countdown-value';
+    else                 countdownValue.className = 'countdown-value';
   }
 
   function secsUntil(t) {
@@ -501,7 +690,7 @@
     return Math.round((target - now) / 1000);
   }
 
-  // ---- Beep (fallback) ----
+  // ---- Beep fallback ----
   function createBeep() {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const osc = ctx.createOscillator();
@@ -521,11 +710,9 @@
   function fireTimer(t) {
     t.fired = true;
     renderEntries();
-
     alarmTitle.textContent = '時刻になりました';
     alarmDetail.textContent = `${t.targetHH}:${t.targetMM}:${t.targetSS}  —  ${t.fileName}`;
     overlay.classList.add('active');
-
     if (t.audioSrc) {
       audioPlayer.src = t.audioSrc;
       audioPlayer.volume = t.volume / 100;
@@ -533,15 +720,11 @@
       audioPlayer.play().catch(() => {});
       activeAudio = { type: 'file' };
     } else {
-      // beep loop
       let beepRef = createBeep();
       let beepTimer = null;
-      if (t.loop) {
-        beepTimer = setInterval(() => { beepRef = createBeep(); }, 2000);
-      }
+      if (t.loop) beepTimer = setInterval(() => { beepRef = createBeep(); }, 2000);
       activeAudio = { type: 'beep', ref: beepRef, timer: beepTimer };
     }
-
     btnStopAll.disabled = false;
     setStatus(`${t.targetHH}:${t.targetMM}:${t.targetSS} — 再生中`);
   }
@@ -560,20 +743,16 @@
     overlay.classList.remove('active');
   }
 
-  // ---- Tick (every second) ----
+  // ---- Tick ----
   function tick() {
     updateClock();
     updateCountdown();
-
     const now = new Date();
     const hh = String(now.getHours()).padStart(2,'0');
     const mm = String(now.getMinutes()).padStart(2,'0');
     const ss = String(now.getSeconds()).padStart(2,'0');
-
     timers.forEach(t => {
-      if (!t.fired && t.targetHH === hh && t.targetMM === mm && t.targetSS === ss) {
-        fireTimer(t);
-      }
+      if (!t.fired && t.targetHH === hh && t.targetMM === mm && t.targetSS === ss) fireTimer(t);
     });
   }
 
@@ -603,9 +782,7 @@
     });
   }
 
-  function setStatus(msg) {
-    statusEl.textContent = msg;
-  }
+  function setStatus(msg) { statusEl.textContent = msg; }
 
   // ---- Events ----
   audioFileEl.addEventListener('change', e => {
@@ -623,30 +800,23 @@
   btnAdd.addEventListener('click', () => {
     const val = targetTime.value;
     if (!val) { setStatus('時刻を入力してください'); return; }
-
     const parts = val.split(':');
     const hh = parts[0];
     const mm = parts[1];
     const ss = parts[2] || '00';
-
-    // check duplicate
     if (timers.find(t => t.targetHH===hh && t.targetMM===mm && t.targetSS===ss && !t.fired)) {
       setStatus('同じ時刻のタイマーが既に存在します');
       return;
     }
-
     const timer = {
       id: Date.now(),
-      targetHH: hh,
-      targetMM: mm,
-      targetSS: ss,
+      targetHH: hh, targetMM: mm, targetSS: ss,
       fileName: audioFile ? audioFile.name : 'ビープ音',
       audioSrc: audioSrc,
       volume: parseInt(volumeEl.value),
       loop: loopToggle.checked,
       fired: false,
     };
-
     timers.push(timer);
     renderEntries();
     setStatus(`${hh}:${mm}:${ss} にタイマーを設定しました`);
@@ -661,7 +831,6 @@
 
   btnDismiss.addEventListener('click', () => {
     stopAudio();
-    // remove only fired timers from display (keep pending)
     timers = timers.filter(t => !t.fired);
     if (timers.length === 0) btnStopAll.disabled = true;
     renderEntries();
@@ -689,7 +858,7 @@
   setDefaultTime();
   updateClock();
   renderEntries();
-  tickInterval = setInterval(tick, 1000);
+  setInterval(tick, 1000);
 </script>
 </body>
 </html>
