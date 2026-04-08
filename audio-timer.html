@@ -501,17 +501,26 @@
 
     .btn-dismiss:hover { background: var(--dismiss-hover); }
 
-    /* ===== Background image layer ===== */
-    #bgLayer {
+    /* ===== Background media layer ===== */
+    #bgLayer, #bgVideo {
       position: fixed;
       inset: 0;
       z-index: 0;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
       opacity: 0;
       transition: opacity 0.3s;
       pointer-events: none;
+    }
+
+    #bgLayer {
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    #bgVideo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .container, .overlay { position: relative; z-index: 1; }
@@ -542,6 +551,7 @@
 <body data-theme="simple">
 
 <div id="bgLayer"></div>
+<video id="bgVideo" muted loop playsinline></video>
 
 <div class="container">
   <h1>Audio Timer</h1>
@@ -569,10 +579,10 @@
 
   <!-- Background image -->
   <div class="card">
-    <div class="card-label" style="margin-bottom:16px;">背景画像</div>
+    <div class="card-label" style="margin-bottom:16px;">背景画像 / 動画</div>
     <div class="file-area" style="margin-bottom:16px;">
-      <label class="file-btn" for="bgImage">画像を選択</label>
-      <input type="file" id="bgImage" accept="image/*">
+      <label class="file-btn" for="bgImage">ファイル選択</label>
+      <input type="file" id="bgImage" accept="image/*,video/*">
       <span class="file-name" id="bgImageName">未選択</span>
       <button class="clear-bg-btn" id="btnClearBg" style="display:none">✕ 削除</button>
     </div>
@@ -681,12 +691,28 @@
   bgOpacityEl.value = savedOpacity;
   bgOpacityDisplay.textContent = savedOpacity + '%';
 
+  const bgVideo = document.getElementById('bgVideo');
+
   bgImageEl.addEventListener('change', e => {
     const f = e.target.files[0];
     if (!f) return;
     const url = URL.createObjectURL(f);
-    bgLayer.style.backgroundImage = `url(${url})`;
-    bgLayer.style.opacity = bgOpacityEl.value / 100;
+    const opacity = bgOpacityEl.value / 100;
+
+    if (f.type.startsWith('video/')) {
+      bgLayer.style.backgroundImage = '';
+      bgLayer.style.opacity = 0;
+      bgVideo.src = url;
+      bgVideo.style.opacity = opacity;
+      bgVideo.play();
+    } else {
+      bgVideo.pause();
+      bgVideo.src = '';
+      bgVideo.style.opacity = 0;
+      bgLayer.style.backgroundImage = `url(${url})`;
+      bgLayer.style.opacity = opacity;
+    }
+
     bgImageName.textContent = f.name;
     btnClearBg.style.display = 'inline';
   });
@@ -695,12 +721,16 @@
     const val = bgOpacityEl.value;
     bgOpacityDisplay.textContent = val + '%';
     if (bgLayer.style.backgroundImage) bgLayer.style.opacity = val / 100;
+    if (bgVideo.src) bgVideo.style.opacity = val / 100;
     localStorage.setItem(BG_OPACITY_KEY, val);
   });
 
   btnClearBg.addEventListener('click', () => {
     bgLayer.style.backgroundImage = '';
     bgLayer.style.opacity = 0;
+    bgVideo.pause();
+    bgVideo.src = '';
+    bgVideo.style.opacity = 0;
     bgImageName.textContent = '未選択';
     bgImageEl.value = '';
     btnClearBg.style.display = 'none';
