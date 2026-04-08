@@ -602,6 +602,101 @@
     }
     .clear-bg-btn:hover { color: var(--del-hover); border-color: var(--del-hover); }
 
+    /* ===== Step header ===== */
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .step-badge {
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-color);
+      border-radius: 50%;
+      width: 22px; height: 22px;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .required-tag {
+      background: #f87171;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ===== Required file highlight ===== */
+    .file-area.unfilled .file-btn {
+      border-color: #f87171;
+      color: #f87171;
+    }
+
+    /* ===== Section divider ===== */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 28px 0 16px;
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .section-divider::before,
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--card-border);
+    }
+
+    /* ===== Collapsible optional cards ===== */
+    details.opt-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-card);
+      margin-bottom: 12px;
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    details.opt-card summary {
+      padding: 16px 20px;
+      font-size: 13px;
+      font-family: var(--font);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+      list-style: none;
+      letter-spacing: 0.05em;
+    }
+
+    details.opt-card summary::-webkit-details-marker { display: none; }
+
+    details.opt-card summary .opt-chevron {
+      font-size: 12px;
+      transition: transform 0.2s;
+    }
+
+    details.opt-card[open] summary .opt-chevron {
+      transform: rotate(180deg);
+    }
+
+    .opt-body {
+      padding: 4px 20px 20px;
+    }
+
     /* ===== メルヘン 装飾 ===== */
     [data-theme="merhen"] h1::before { content: '♡ '; }
     [data-theme="merhen"] h1::after  { content: ' ♡'; }
@@ -633,71 +728,27 @@
     <div class="clock-date" id="clockDate"></div>
   </div>
 
-  <!-- Set time -->
+  <!-- Step 1: 再生時刻 -->
   <div class="card">
-    <div class="card-label">再生時刻</div>
-    <div class="time-row">
-      <input type="time" id="targetTime" class="time-input" step="1">
+    <div class="card-header">
+      <span class="step-badge">1</span>
+      <span class="card-label" style="margin:0">再生時刻</span>
     </div>
+    <input type="time" id="targetTime" class="time-input" step="1">
   </div>
 
-  <!-- Background image -->
+  <!-- Step 2: アラーム音（必須） -->
   <div class="card">
-    <div class="card-label" style="margin-bottom:16px;">背景画像 / 動画</div>
-    <div class="file-area" style="margin-bottom:16px;">
-      <label class="file-btn" for="bgImage">ファイル選択</label>
-      <input type="file" id="bgImage" accept="image/*,video/*">
-      <span class="file-name" id="bgImageName">未選択</span>
-      <button class="clear-bg-btn" id="btnClearBg" style="display:none">✕ 削除</button>
+    <div class="card-header">
+      <span class="step-badge">2</span>
+      <span class="card-label" style="margin:0">アラーム音</span>
+      <span class="required-tag">必須</span>
     </div>
-    <div class="volume-row">
-      <span class="vol-label">🖼</span>
-      <input type="range" id="bgOpacity" min="0" max="100" value="30">
-      <span class="vol-value" id="bgOpacityDisplay">30%</span>
-    </div>
-  </div>
-
-  <!-- BGM -->
-  <div class="card">
-    <div class="card-label" style="margin-bottom:16px;">作業用BGM</div>
-    <div class="file-area" style="margin-bottom:14px;">
-      <label class="file-btn" for="bgmFile">ファイル選択</label>
-      <input type="file" id="bgmFile" accept="audio/*,video/*">
-      <span class="file-name" id="bgmFileName">未選択</span>
-    </div>
-    <div class="volume-row" style="margin-bottom:14px;">
-      <span class="vol-label">🎵</span>
-      <input type="range" id="bgmVolume" min="0" max="100" value="50">
-      <span class="vol-value" id="bgmVolDisplay">50%</span>
-    </div>
-    <div class="toggle-row" style="margin-bottom:4px;">
-      <span class="toggle-label">ループ再生</span>
-      <label class="toggle">
-        <input type="checkbox" id="bgmLoop" checked>
-        <div class="toggle-track"></div>
-        <div class="toggle-thumb"></div>
-      </label>
-    </div>
-    <div class="bgm-controls">
-      <button class="bgm-btn" id="btnBgmPlay" disabled>▶ 再生</button>
-      <button class="bgm-btn" id="btnBgmStop" disabled>⏹ 停止</button>
-    </div>
-    <div class="bgm-status" id="bgmStatus"></div>
-  </div>
-
-  <!-- Audio file -->
-  <div class="card">
-    <div class="card-label">音声ファイル</div>
-    <div class="file-area">
-      <label class="file-btn" for="audioFile">ファイル選択</label>
+    <div class="file-area unfilled" id="alarmFileArea" style="margin-bottom:16px;">
+      <label class="file-btn" for="audioFile">ファイルを選択</label>
       <input type="file" id="audioFile" accept="audio/*,video/*">
-      <span class="file-name" id="fileName">未選択（ビープ音を使用）</span>
+      <span class="file-name" id="fileName">音声ファイルを選択してください</span>
     </div>
-  </div>
-
-  <!-- Volume & loop -->
-  <div class="card">
-    <div class="card-label" style="margin-bottom:16px;">オプション</div>
     <div class="volume-row" style="margin-bottom:16px;">
       <span class="vol-label">🔊</span>
       <input type="range" id="volume" min="0" max="100" value="80">
@@ -736,6 +787,64 @@
       <div class="no-entries">タイマーがありません</div>
     </div>
   </div>
+
+  <!-- Optional section -->
+  <div class="section-divider">オプション</div>
+
+  <!-- Background image/video -->
+  <details class="opt-card">
+    <summary>
+      背景画像 / 動画
+      <span class="opt-chevron">▼</span>
+    </summary>
+    <div class="opt-body">
+      <div class="file-area" style="margin-bottom:16px;">
+        <label class="file-btn" for="bgImage">ファイル選択</label>
+        <input type="file" id="bgImage" accept="image/*,video/*">
+        <span class="file-name" id="bgImageName">未選択</span>
+        <button class="clear-bg-btn" id="btnClearBg" style="display:none">✕ 削除</button>
+      </div>
+      <div class="volume-row">
+        <span class="vol-label">🖼</span>
+        <input type="range" id="bgOpacity" min="0" max="100" value="30">
+        <span class="vol-value" id="bgOpacityDisplay">30%</span>
+      </div>
+    </div>
+  </details>
+
+  <!-- BGM -->
+  <details class="opt-card">
+    <summary>
+      作業用BGM
+      <span class="opt-chevron">▼</span>
+    </summary>
+    <div class="opt-body">
+      <div class="file-area" style="margin-bottom:14px;">
+        <label class="file-btn" for="bgmFile">ファイル選択</label>
+        <input type="file" id="bgmFile" accept="audio/*,video/*">
+        <span class="file-name" id="bgmFileName">未選択</span>
+      </div>
+      <div class="volume-row" style="margin-bottom:14px;">
+        <span class="vol-label">🎵</span>
+        <input type="range" id="bgmVolume" min="0" max="100" value="50">
+        <span class="vol-value" id="bgmVolDisplay">50%</span>
+      </div>
+      <div class="toggle-row" style="margin-bottom:4px;">
+        <span class="toggle-label">ループ再生</span>
+        <label class="toggle">
+          <input type="checkbox" id="bgmLoop" checked>
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+      <div class="bgm-controls">
+        <button class="bgm-btn" id="btnBgmPlay" disabled>▶ 再生</button>
+        <button class="bgm-btn" id="btnBgmStop" disabled>⏹ 停止</button>
+      </div>
+      <div class="bgm-status" id="bgmStatus"></div>
+    </div>
+  </details>
+
 </div>
 
 <!-- Alarm overlay -->
@@ -1066,6 +1175,7 @@
     audioFile = f;
     audioSrc = URL.createObjectURL(f);
     fileNameEl.textContent = f.name;
+    document.getElementById('alarmFileArea').classList.remove('unfilled');
   });
 
   volumeEl.addEventListener('input', () => {
