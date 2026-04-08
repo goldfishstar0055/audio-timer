@@ -501,6 +501,34 @@
 
     .btn-dismiss:hover { background: var(--dismiss-hover); }
 
+    /* ===== Background image layer ===== */
+    #bgLayer {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .container, .overlay { position: relative; z-index: 1; }
+
+    .clear-bg-btn {
+      background: none;
+      border: 1px solid var(--file-btn-border);
+      border-radius: 6px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 12px;
+      padding: 4px 8px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .clear-bg-btn:hover { color: var(--del-hover); border-color: var(--del-hover); }
+
     /* ===== メルヘン 装飾 ===== */
     [data-theme="merhen"] h1::before { content: '♡ '; }
     [data-theme="merhen"] h1::after  { content: ' ♡'; }
@@ -512,6 +540,8 @@
   </style>
 </head>
 <body data-theme="simple">
+
+<div id="bgLayer"></div>
 
 <div class="container">
   <h1>Audio Timer</h1>
@@ -534,6 +564,22 @@
     <div class="card-label">再生時刻</div>
     <div class="time-row">
       <input type="time" id="targetTime" class="time-input" step="1">
+    </div>
+  </div>
+
+  <!-- Background image -->
+  <div class="card">
+    <div class="card-label" style="margin-bottom:16px;">背景画像</div>
+    <div class="file-area" style="margin-bottom:16px;">
+      <label class="file-btn" for="bgImage">画像を選択</label>
+      <input type="file" id="bgImage" accept="image/*">
+      <span class="file-name" id="bgImageName">未選択</span>
+      <button class="clear-bg-btn" id="btnClearBg" style="display:none">✕ 削除</button>
+    </div>
+    <div class="volume-row">
+      <span class="vol-label">🖼</span>
+      <input type="range" id="bgOpacity" min="0" max="100" value="30">
+      <span class="vol-value" id="bgOpacityDisplay">30%</span>
     </div>
   </div>
 
@@ -620,6 +666,45 @@
 
   // Restore saved theme
   applyTheme(localStorage.getItem(THEME_KEY) || 'simple');
+
+  // ---- Background image ----
+  const bgLayer          = document.getElementById('bgLayer');
+  const bgImageEl        = document.getElementById('bgImage');
+  const bgImageName      = document.getElementById('bgImageName');
+  const bgOpacityEl      = document.getElementById('bgOpacity');
+  const bgOpacityDisplay = document.getElementById('bgOpacityDisplay');
+  const btnClearBg       = document.getElementById('btnClearBg');
+  const BG_OPACITY_KEY   = 'audio-timer-bg-opacity';
+
+  // Restore saved opacity
+  const savedOpacity = localStorage.getItem(BG_OPACITY_KEY) || '30';
+  bgOpacityEl.value = savedOpacity;
+  bgOpacityDisplay.textContent = savedOpacity + '%';
+
+  bgImageEl.addEventListener('change', e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const url = URL.createObjectURL(f);
+    bgLayer.style.backgroundImage = `url(${url})`;
+    bgLayer.style.opacity = bgOpacityEl.value / 100;
+    bgImageName.textContent = f.name;
+    btnClearBg.style.display = 'inline';
+  });
+
+  bgOpacityEl.addEventListener('input', () => {
+    const val = bgOpacityEl.value;
+    bgOpacityDisplay.textContent = val + '%';
+    if (bgLayer.style.backgroundImage) bgLayer.style.opacity = val / 100;
+    localStorage.setItem(BG_OPACITY_KEY, val);
+  });
+
+  btnClearBg.addEventListener('click', () => {
+    bgLayer.style.backgroundImage = '';
+    bgLayer.style.opacity = 0;
+    bgImageName.textContent = '未選択';
+    bgImageEl.value = '';
+    btnClearBg.style.display = 'none';
+  });
 
   // ---- State ----
   let timers = [];
