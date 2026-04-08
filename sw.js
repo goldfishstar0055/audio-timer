@@ -1,4 +1,4 @@
-const CACHE = 'audio-timer-v1';
+const CACHE = 'audio-timer-v2';
 const ASSETS = [
   './audio-timer.html',
   './manifest.json',
