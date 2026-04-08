@@ -1098,10 +1098,18 @@
     alarmDetail.textContent = `${t.targetHH}:${t.targetMM}:${t.targetSS}  —  ${t.fileName}`;
     overlay.classList.add('active');
     if (t.audioSrc) {
-      audioPlayer.src = t.audioSrc;
+      // srcが変わっていない場合でも再セットして currentTime をリセット
+      if (audioPlayer.src !== t.audioSrc) audioPlayer.src = t.audioSrc;
+      audioPlayer.currentTime = 0;
       audioPlayer.volume = t.volume / 100;
       audioPlayer.loop = t.loop;
-      audioPlayer.play().catch(() => {});
+      audioPlayer.play().catch(() => {
+        // iOS Safari: 自動再生がブロックされた場合の通知
+        setStatus('⚠ タップして再生を開始してください');
+        overlay.addEventListener('click', () => {
+          audioPlayer.play().catch(() => {});
+        }, { once: true });
+      });
       activeAudio = { type: 'file' };
     } else {
       let beepRef = createBeep();
@@ -1169,6 +1177,21 @@
   function setStatus(msg) { statusEl.textContent = msg; }
 
   // ---- Events ----
+  // モバイルの自動再生制限を解除する
+  // ユーザー操作のタイミングで一度 play→pause しておくことで
+  // 後からの programmatic play() がブロックされなくなる
+  async function unlockAudioPlayback(src) {
+    if (!src) return;
+    try {
+      audioPlayer.src = src;
+      audioPlayer.volume = 0;
+      await audioPlayer.play();
+      audioPlayer.pause();
+      audioPlayer.currentTime = 0;
+      audioPlayer.volume = parseInt(volumeEl.value) / 100;
+    } catch(e) { /* 失敗しても続行 */ }
+  }
+
   audioFileEl.addEventListener('change', e => {
     const f = e.target.files[0];
     if (!f) return;
@@ -1176,6 +1199,7 @@
     audioSrc = URL.createObjectURL(f);
     fileNameEl.textContent = f.name;
     document.getElementById('alarmFileArea').classList.remove('unfilled');
+    unlockAudioPlayback(audioSrc); // ← ユーザー操作中に再生権限を取得
   });
 
   volumeEl.addEventListener('input', () => {
@@ -1203,6 +1227,7 @@
       fired: false,
     };
     timers.push(timer);
+    if (audioSrc) unlockAudioPlayback(audioSrc); // ← ボタン操作中にも解除
     renderEntries();
     setStatus(`${hh}:${mm}:${ss} にタイマーを設定しました`);
   });
