@@ -525,6 +525,38 @@
 
     .container, .overlay { position: relative; z-index: 1; }
 
+    /* ===== BGM player ===== */
+    .bgm-controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .bgm-btn {
+      background: var(--file-btn-bg);
+      border: 1px solid var(--file-btn-border);
+      border-radius: var(--radius-input);
+      color: var(--text);
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 13px;
+      padding: 8px 16px;
+      transition: all 0.15s;
+      flex: 1;
+    }
+
+    .bgm-btn:hover { border-color: var(--input-focus); }
+    .bgm-btn.playing { background: var(--btn-primary-bg); color: var(--btn-primary-color); border-color: var(--btn-primary-bg); }
+    .bgm-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .bgm-status {
+      font-size: 12px;
+      color: var(--countdown-on);
+      text-align: center;
+      margin-top: 8px;
+      min-height: 16px;
+    }
+
     .clear-bg-btn {
       background: none;
       border: 1px solid var(--file-btn-border);
@@ -593,6 +625,34 @@
     </div>
   </div>
 
+  <!-- BGM -->
+  <div class="card">
+    <div class="card-label" style="margin-bottom:16px;">作業用BGM</div>
+    <div class="file-area" style="margin-bottom:14px;">
+      <label class="file-btn" for="bgmFile">ファイル選択</label>
+      <input type="file" id="bgmFile" accept="audio/*,video/*">
+      <span class="file-name" id="bgmFileName">未選択</span>
+    </div>
+    <div class="volume-row" style="margin-bottom:14px;">
+      <span class="vol-label">🎵</span>
+      <input type="range" id="bgmVolume" min="0" max="100" value="50">
+      <span class="vol-value" id="bgmVolDisplay">50%</span>
+    </div>
+    <div class="toggle-row" style="margin-bottom:4px;">
+      <span class="toggle-label">ループ再生</span>
+      <label class="toggle">
+        <input type="checkbox" id="bgmLoop" checked>
+        <div class="toggle-track"></div>
+        <div class="toggle-thumb"></div>
+      </label>
+    </div>
+    <div class="bgm-controls">
+      <button class="bgm-btn" id="btnBgmPlay" disabled>▶ 再生</button>
+      <button class="bgm-btn" id="btnBgmStop" disabled>⏹ 停止</button>
+    </div>
+    <div class="bgm-status" id="bgmStatus"></div>
+  </div>
+
   <!-- Audio file -->
   <div class="card">
     <div class="card-label">音声ファイル</div>
@@ -657,6 +717,7 @@
 </div>
 
 <audio id="audioPlayer"></audio>
+<audio id="bgmPlayer"></audio>
 
 <script>
   // ---- Theme ----
@@ -734,6 +795,68 @@
     bgImageName.textContent = '未選択';
     bgImageEl.value = '';
     btnClearBg.style.display = 'none';
+  });
+
+  // ---- BGM ----
+  const bgmPlayer    = document.getElementById('bgmPlayer');
+  const bgmFileEl    = document.getElementById('bgmFile');
+  const bgmFileName  = document.getElementById('bgmFileName');
+  const bgmVolumeEl  = document.getElementById('bgmVolume');
+  const bgmVolDisplay= document.getElementById('bgmVolDisplay');
+  const bgmLoopEl    = document.getElementById('bgmLoop');
+  const btnBgmPlay   = document.getElementById('btnBgmPlay');
+  const btnBgmStop   = document.getElementById('btnBgmStop');
+  const bgmStatus    = document.getElementById('bgmStatus');
+
+  bgmFileEl.addEventListener('change', e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    bgmPlayer.src = URL.createObjectURL(f);
+    bgmPlayer.volume = bgmVolumeEl.value / 100;
+    bgmPlayer.loop = bgmLoopEl.checked;
+    bgmFileName.textContent = f.name;
+    btnBgmPlay.disabled = false;
+    btnBgmStop.disabled = false;
+    bgmStatus.textContent = '';
+  });
+
+  bgmVolumeEl.addEventListener('input', () => {
+    bgmVolDisplay.textContent = bgmVolumeEl.value + '%';
+    bgmPlayer.volume = bgmVolumeEl.value / 100;
+  });
+
+  bgmLoopEl.addEventListener('change', () => {
+    bgmPlayer.loop = bgmLoopEl.checked;
+  });
+
+  btnBgmPlay.addEventListener('click', () => {
+    if (bgmPlayer.paused) {
+      bgmPlayer.play();
+      btnBgmPlay.textContent = '⏸ 一時停止';
+      btnBgmPlay.classList.add('playing');
+      bgmStatus.textContent = '再生中';
+    } else {
+      bgmPlayer.pause();
+      btnBgmPlay.textContent = '▶ 再生';
+      btnBgmPlay.classList.remove('playing');
+      bgmStatus.textContent = '一時停止中';
+    }
+  });
+
+  btnBgmStop.addEventListener('click', () => {
+    bgmPlayer.pause();
+    bgmPlayer.currentTime = 0;
+    btnBgmPlay.textContent = '▶ 再生';
+    btnBgmPlay.classList.remove('playing');
+    bgmStatus.textContent = '';
+  });
+
+  bgmPlayer.addEventListener('ended', () => {
+    if (!bgmPlayer.loop) {
+      btnBgmPlay.textContent = '▶ 再生';
+      btnBgmPlay.classList.remove('playing');
+      bgmStatus.textContent = '再生終了';
+    }
   });
 
   // ---- State ----
